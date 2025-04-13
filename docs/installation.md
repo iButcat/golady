@@ -2,6 +2,8 @@
 
 This guide helps you set up your own instance of GitHub Notify.
 
+> **⚠️ WORK IN PROGRESS**: This project is currently undergoing significant refactoring. Installation steps may change and some features might not work as expected.
+
 ## Prerequisites
 
 - Go 1.22 or higher

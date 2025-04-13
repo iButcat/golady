@@ -2,6 +2,8 @@
 
 A Discord bot that sends notifications for GitHub events to your Discord server.
 
+> **⚠️ WORK IN PROGRESS**: This project is currently being refactored with improved design patterns and structure. It was initially started several years ago and is now being modernized. Features may change and documentation might be incomplete.
+
 ## Features
 
 - 🔔 **Real-time notifications**: Get instant notifications for GitHub events in your Discord channels
@@ -50,4 +52,8 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](https://github.com/yourusername/github-notify/blob/main/LICENSE) file for details. 
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/yourusername/github-notify/blob/main/LICENSE) file for details.
+
+## GitHub API Usage
+
+This application complies with [GitHub Developer Program](https://docs.github.com/en/developers/overview/github-developer-program) requirements. It uses the official GitHub API to retrieve repository information and process webhook events. If you encounter any issues or have questions about our API usage, please open an issue on the GitHub repository. 

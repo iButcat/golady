@@ -2,6 +2,8 @@
 
 A Discord bot that sends notifications for GitHub events to your Discord server.
 
+> **⚠️ WORK IN PROGRESS**: This project is currently being refactored with improved design patterns and structure. It was initially started several years ago and is now being modernized. Features may change and documentation might be incomplete.
+
 ![GitHub Notify Screenshot](./docs/screenshot.png)
 
 ## Features
