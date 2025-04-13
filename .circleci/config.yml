@@ -1,0 +1,79 @@
+version: 2.1
+orbs:
+  gcp-gcr: circleci/gcp-gcr@0.6.1
+  cloudrun: circleci/gcp-cloud-run@1.0.1
+  gcp-gke: circleci/gcp-gke@0.2.0
+  golangci-lint: timakin/golangci-lint@volatile
+executors:
+  gcloud-executor:
+    docker:
+      - image: google/cloud-sdk
+  machine-executor:
+    machine: true
+jobs:
+  build:
+    docker:
+      - image: cimg/go:1.18
+    description: initial build - Can make use of test coverage and tests
+    steps:
+      - checkout
+      - run:
+          name: Test the source
+          command: |
+            echo "test"
+      - run:
+          name: test
+          command: |
+            go test -v ./... 
+      - run:  
+          name: linter
+          command: |
+            golangci-lint run
+
+  build_push_image_gcr:
+    description: Build docker image and push to gcr registry
+    executor: machine-executor
+    steps:
+      - checkout
+      - run:
+          name: Prepare env vars
+          command: |
+            echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
+            gcloud config set project ${GOOGLE_PROJECT_ID}
+            gcloud config set compute/zone ${GOOGLE_COMPUTE_ZONE}
+
+      - gcp-gcr/gcr-auth:
+          gcloud-service-key: GCLOUD_SERVICE_KEY
+          google-project-id: GOOGLE_PROJECT_ID
+          google-compute-zone: GOOGLE_COMPUTE_ZONE
+
+      - gcp-gcr/build-image:
+          dockerfile: Dockerfile
+          google-project-id: GOOGLE_PROJECT_ID
+          image: $IMAGE_NAME
+          registry-url: "eu.gcr.io"
+          tag: $CIRCLE_SHA1
+
+      - gcp-gcr/push-image:
+          google-project-id: GOOGLE_PROJECT_ID
+          image: $IMAGE_NAME
+          registry-url: "eu.gcr.io"
+          tag: $CIRCLE_SHA1
+
+      - cloudrun/build:
+          tag: 'eu.gcr.io/${GOOGLE_PROJECT_ID}/${IMAGE_NAME}${CIRCLE_SHA1}'
+
+      - cloudrun/deploy:
+          platform: managed
+          region: europe-west1
+          image: 'eu.gcr.io/${GOOGLE_PROJECT_ID}/${IMAGE_NAME}${CIRCLE_SHA1}'
+          service-name: $IMAGE_NAME
+
+workflows:
+  build_gcloud_deploy:
+    jobs:
+      - build
+      - build_push_image_gcr:
+          requires:
+            - build
+
